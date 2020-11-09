@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" id="file">
+    <button id="button">上传</button>
+</body>
+</html>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    let file = null;
+    document.getElementById('file').addEventListener('change',(e)=>{
+        file = e.target.files[0]
+    })
+
+
+    document.getElementById('button').addEventListener('click',()=>{
+        const formData = new FormData();
+        formData.append('file',file);
+        axios({
+            url:"http://localhost:3000/file",
+            method:"POST",
+            data:formData
+        })
+        .then((result) => {
+            console.log(result);
+        }).catch((err) => {
+            console.log(err);
+        });
+    })
+</script>
