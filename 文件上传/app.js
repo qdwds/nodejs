@@ -7,9 +7,6 @@ const DIR_PATH = path.join(__dirname, 'upload');
 const upload = multer({ dest: DIR_PATH }) //  文件存放的地方
 
 app.use(express.static(path.join(__dirname, 'public')))
-app.get('/', (req, res) => {
-    res.send('123')
-})
 
 app.post('/file', upload.single('file'), (req, res) => {
     const oldFilePath = req.file.path;

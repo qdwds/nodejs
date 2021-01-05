@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>长列表渲染</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .box {
+            width: 120px;
+            height: 200px;
+            position: relative;
+            overflow: auto;
+            border: 1px solid red;
+            margin: 100px auto;
+        }
+
+        ul {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        li {
+            border: 1px solid blue;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            滚动没有渲染:滚动完 没有设置ul 高度
+            ul 高度需要动态设 this.$refs.ul.style.{{top}};
+            
+        </div>
+        <div>
+            {{showList}}
+        </div>
+        <div class="box" ref="box" @scroll="handelScroll">
+            <div id="show" ref="show"></div>
+            <ul ref="ul">
+                <li v-for="v in showList">{{v}}</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
+<script>
+
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                list: [],    //  数据
+                height: 20,  //  每页高度
+                showNum: 10, //  显示10条数据
+                start: 0,
+                end: 10,
+                top:0
+            }
+        },
+        methods: {
+            handelScroll() {
+                //  获取滚动的高度 - 滚动了多少
+                let scrollTop = this.$refs.box.scrollTop;
+                //  开始
+                this.start = Math.floor(scrollTop / this.height);
+                //  结束
+                this.end = this.start + this.showNum;
+                //  动态设置ul的高度
+                this.$refs.ul.style.top = this.start * this.height + 'px';
+                this.top = this.start * this.height + 'px';
+            }
+        },
+        mounted() {
+            for (let i = 0; i < 100; i++) {
+                this.list.push(i)
+            }
+            //  计算容器的高度
+            this.$refs.box.style.height = this.height * this.showNum + 'px';
+            //  设置虚拟box高度的高度
+            this.$refs.show.style.height = this.height * this.list.length + 'px';
+        },
+        computed: {
+            showList() {
+                return this.list.slice(this.start, this.end);
+            }
+        }
+    })
+</script>

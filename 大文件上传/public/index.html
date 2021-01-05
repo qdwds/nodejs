@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" name="" id="file">
+    <input type="button" onclick="sendFile()" value="max file upload">
+    <button onclick="sendFile()">max file upload</button>
+</body>
+
+</html>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    let file = null;
+    document.getElementById('file')
+        .addEventListener('change', (e) => {
+            file = e.target.files[0];
+        })
+    async function sendFile() {
+        if (!file) return console.warn('文件呢，大兄弟！')
+        const fileChunkList = await handleFileChunk(file);
+        const filename = file.name;
+        //  把每个切片转成formdata
+        const filesChunks = fileChunkList
+            .map(({ file },index) => {  //  解构file
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('file_name', `${filename} - ${index}`);
+                return { formData }
+            })
+            //  上传每个独立切片
+            .map(async({ formData }) => {
+                return requestSendFile(formData)
+            });
+        await Promise.all([filesChunks]);
+        await requestMergeFile()
+    }
+    //  文件转成blob
+    function handleFileChunk(file) {
+        let cur = 0;
+        const size = 1024 * 1024 * 0.2; // 1m
+        const fileChunkList = []; //    切片列表
+
+        while (cur < file.size) {
+            fileChunkList.push({
+                file: file.slice(cur, cur + size)
+            })
+            cur += size;
+        }
+        return fileChunkList
+    }
+    //  发送每个切片
+    function requestSendFile(formData) {
+        return new Promise((resolve, reject) => {
+            axios({
+                url: "http://localhost:3000/file",
+                method: "POST",
+                data: formData
+            }).then(res => {
+                resolve(res)
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    }
+    //  合并切片
+    function requestMergeFile() {
+        axios({
+            url: `http://localhost:3000/merge?filename=${file.name}`,
+            method: "GET",
+        })
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+    }
+</script>

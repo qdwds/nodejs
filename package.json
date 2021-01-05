@@ -19,6 +19,8 @@
   "homepage": "https://github.com/qdwds/nodejs#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "multer": "^1.4.2"
+    "fs-extra": "^9.0.1",
+    "multer": "^1.4.2",
+    "multiparty": "^4.2.2"
   }
 }
