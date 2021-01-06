@@ -4,32 +4,45 @@ const path = require('path');
 const fs = require('fs');
 const DIR_PATH = path.join(__dirname, 'upload')
 const multer = require('multer');
+const { resolve } = require('path');
+const { rejects } = require('assert');
 const upload = multer({ dest: DIR_PATH })
 app.use(express.static(path.join(__dirname, 'public')))
-console.log(DIR_PATH);
 //  切片上传文件接口
 app.post('/file', upload.single('file'), (req, res) => {
-    const filename = req.body.file_name;  //  文件名称
-    const name = filename.split(' - ')[0];
-    const mkdirFileName = path.join(DIR_PATH, name);
+    const file_name = req.body.file_name;  // 每个片的文件名
+    const file_dir_name = file_name.split(' - ')[0];    //  文件名
+    const file_dir = path.join(DIR_PATH, file_dir_name);    //  路径
 
     //  修改文件名称
-    const olgFileName = path.join(DIR_PATH, req.file.filename);
-    const newFileName = path.join(DIR_PATH, filename);
+    const oldFileDir = path.join(req.file.path);
+    const newFileDir = path.join(DIR_PATH, file_name);
+
     //  修改文件名称
-    fs.renameSync(olgFileName, newFileName);
+    fs.renameSync(oldFileDir, newFileDir);
+
     //  文件夹不存在的时候再创建
-    if (!fs.existsSync(mkdirFileName)) {
+    if (!fs.existsSync(file_dir)) {
         //  创建文件夹
-        fs.mkdirSync(mkdirFileName)
+        fs.mkdirSync(file_dir)
     }
-    console.log(newFileName);
-    console.log(path.join(newFileName,name));
-    fs.moveSync(newFileName,path.join(newFileName,name))
+    //  移动文件到指定目录
+    fs.renameSync(newFileDir, path.join(DIR_PATH, file_dir_name, file_name))
     res.send('file ok')
 })
+
 app.get('/merge', (req, res) => {
-    // console.log(req.query);
-    res.send('文件合并1');
+    const { filename } = req.query; //  文件名称
+    const chunkDir = path.join(DIR_PATH, filename)   //  切片的目录
+    //   获取文件夹下所有的文件
+
+    fs.readdir(chunkDir, (err, dir) => {
+     
+            res.send('文件合并1');
+
+
+
+    })
 })
 app.listen(3000, () => console.log(3000))
+

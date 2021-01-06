@@ -38,12 +38,14 @@
                 return requestSendFile(formData)
             });
         await Promise.all([filesChunks]);
-        await requestMergeFile()
+        setTimeout(()=>{
+             requestMergeFile()
+        },3000)
     }
     //  文件转成blob
     function handleFileChunk(file) {
         let cur = 0;
-        const size = 1024 * 1024 * 0.2; // 1m
+        const size = 1024 * 1024 * 1; // 1m
         const fileChunkList = []; //    切片列表
 
         while (cur < file.size) {
@@ -70,6 +72,7 @@
     }
     //  合并切片
     function requestMergeFile() {
+        console.log(file);
         axios({
             url: `http://localhost:3000/merge?filename=${file.name}`,
             method: "GET",
