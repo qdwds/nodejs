@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        一次选多个
+        <input type="file" id="file" size="10" multiple='multiple'>
+        <input type="button" id="submit" value="upload">
+    </div>
+    <div>
+        多选
+        <input type="file" id="file1">
+        <input type="file" id="file2">
+        <input type="file" id="file3">
+        <input type="button" id="submit1" value="upload1">
+    </div>
+</body>
+
+</html>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    let files = null;
+    document.getElementById('file').addEventListener('change', (e) => {
+        files = e.target.files;
+    })
+    document.getElementById('submit').addEventListener('click', (e) => {
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('file', files[i]);
+        }
+        sendFormData(formData)
+    })
+
+    function sendFormData(formData) {
+        axios({
+            method: "POST",
+            url: "http://localhost:3000/file",
+            data: formData
+        })
+            .then(res => console.log(res.data))
+            .catch(err => console.log(err))
+    }
+
+
+    const fileList = []
+    document.getElementById('file1').addEventListener('change', (e) => {
+        fileList.push(e.target.files[0])
+    })
+    document.getElementById('file2').addEventListener('change', (e) => {
+        fileList.push(e.target.files[0])
+    })
+    document.getElementById('file3').addEventListener('change', (e) => {
+        fileList.push(e.target.files[0])
+    })
+
+    document.getElementById('submit1').addEventListener('click', _ => {
+        const formData = new FormData();
+        for (let i = 0; i < fileList.length; i++) {
+            formData.append('file', fileList[i]);
+        }
+        sendFormData(formData)
+    })
+</script>
