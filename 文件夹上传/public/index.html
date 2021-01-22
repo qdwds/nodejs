@@ -32,6 +32,7 @@
     function getForm(file) {
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('name',file.name)
         formData.append('path', file.webkitRelativePath)
         axios({
             method: "POST",
@@ -42,52 +43,4 @@
             .catch(err => console.log(err));
 
     }
-
-    // let TREE = function (name, is_dir) {
-    //     this.name = name;
-    //     this.is_dir = is_dir;
-    //     this.path = "";
-    //     this.index;
-    //     this.size;
-    //     this.children = [];
-    //     this.add = function (child) {
-    //         this.children.push(child);
-    //     };
-    // };
-    // var now_dir;
-    // var children;
-    // let root = new TREE(
-    //     folder[0].webkitRelativePath.split("/")[0],
-    //     1
-    // );
-    // for (var i = 0; i < folder.length; i++) {
-    //     var folderPath = folder[i].webkitRelativePath.split("/");
-    //     now_dir = root;
-    //     for (var j = 1; j < folderPath.length - 1; j++) {
-    //         var find_flag = 0;
-    //         for (var k = 0; k < now_dir.children.length; k++) {
-    //             if (now_dir.children[k].is_dir == 1)
-    //                 children = now_dir.children[k];
-    //             else continue;
-
-    //             if (children.name == folderPath[j]) {
-    //                 find_flag = 1;
-    //                 now_dir = children;
-    //                 break;
-    //             }
-    //         }
-
-    //         if (find_flag == 0) {
-    //             let new_dir = new TREE(folderPath[j], 1);
-    //             now_dir.add(new_dir);
-    //             now_dir = new_dir;
-    //         }
-    //     }
-
-    //     let file = new TREE(folderPath[j], 0);
-    //     file.path = folder[i].webkitRelativePath;
-    //     file.index = folder[i];
-    //     file.size = folder[i].size
-    //     now_dir.add(file);
-    // }
 </script>
